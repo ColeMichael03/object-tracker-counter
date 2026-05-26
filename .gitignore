@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Pytest
+.pytest_cache/
+
+# Streamlit
+.streamlit/
+
+# Database
+*.db
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# YOLO weights
+*.pt
+
+# Logs
+*.log

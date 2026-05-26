@@ -1,0 +1,6 @@
+opencv-python>=4.13.0.92
+ultralytics>=8.4.54
+streamlit>=1.57.0
+pandas>=3.0.3
+numpy>=2.0.0
+pytest>=8.0.0
