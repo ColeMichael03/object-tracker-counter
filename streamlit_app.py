@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import tempfile
 import time
 from pathlib import Path
 
@@ -15,11 +16,28 @@ st.set_page_config(page_title="Highway Vehicle Counter", layout="wide")
 st.title("Highway Vehicle Counter")
 
 with st.sidebar:
-    source = st.text_input(
-        "Camera source",
-        value="0",
-        help="Use 0 for the local webcam, a path like sample.mp4, or an HTTP/RTSP stream URL.",
+    source_mode = st.radio(
+        "Input mode",
+        (
+            "Video upload",
+            "Stream URL",
+            "Local webcam source 0",
+        ),
+        help="Streamlit Cloud cannot access your laptop webcam. Use upload or stream URL for cloud deployments.",
     )
+    uploaded_video = None
+    stream_url = ""
+    source: str | int
+    if source_mode == "Video upload":
+        uploaded_video = st.file_uploader("Upload video file", type=("mp4", "mov", "avi", "mkv"))
+        source = ""
+    elif source_mode == "Stream URL":
+        stream_url = st.text_input("HTTP or RTSP stream URL", placeholder="rtsp://user:password@host:554/stream1")
+        source = stream_url
+    else:
+        st.warning("Local-only: source 0 works on your own machine, not on Streamlit Cloud.")
+        source = 0
+
     db_path = st.text_input("SQLite database", value="traffic_counts.db")
     model_name = st.text_input("YOLO model", value="yolo26n.pt")
     confidence = st.slider("Confidence", 0.05, 0.95, 0.35, 0.05)
@@ -50,6 +68,18 @@ def render_metrics() -> None:
 render_metrics()
 
 if run:
+    if source_mode == "Video upload":
+        if uploaded_video is None:
+            st.error("Upload a video file before starting.")
+            st.stop()
+        suffix = Path(uploaded_video.name).suffix or ".mp4"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_video:
+            temp_video.write(uploaded_video.getbuffer())
+            source = temp_video.name
+    elif source_mode == "Stream URL" and not stream_url.strip():
+        st.error("Enter an HTTP or RTSP stream URL before starting.")
+        st.stop()
+
     validation = validate_camera_source(source)
     if not validation.ok:
         st.error(validation.message)

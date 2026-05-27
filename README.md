@@ -1,6 +1,6 @@
 # Highway Vehicle Counter
 
-A Python computer vision app for detecting, tracking, and counting vehicles in a highway camera feed. It uses OpenCV for camera/video input, Ultralytics YOLO for object detection, lightweight centroid tracking for stable object IDs, SQLite for event storage, and Streamlit for a local dashboard.
+A Python computer vision app for detecting, tracking, and counting vehicles in a highway camera feed. It uses OpenCV for camera/video input, Ultralytics YOLO for object detection, lightweight centroid tracking for stable object IDs, SQLite for event storage, and Streamlit for a dashboard.
 
 ## Setup
 
@@ -10,20 +10,24 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+`requirements.txt` uses `opencv-python-headless` so the app can deploy on Streamlit Cloud, which does not provide desktop GUI libraries.
+
 ## Run The Dashboard
 
 ```bash
 streamlit run streamlit_app.py
 ```
 
-The Camera source field supports three input modes:
+The dashboard supports three input modes:
 
 ```text
-0
-sample.mp4
+Video upload
 rtsp://user:password@192.168.1.50:554/stream1
 http://192.168.1.50/video
+Local webcam source 0
 ```
+
+On Streamlit Cloud, use **Video upload** or **Stream URL**. `Local webcam source 0` is only for running the app on your own machine because Streamlit Cloud cannot access your laptop webcam.
 
 OpenCV validates the source before the YOLO model starts. If the source cannot be opened, the dashboard shows whether the problem looks like a missing file, unavailable webcam, or unreachable HTTP/RTSP stream.
 
